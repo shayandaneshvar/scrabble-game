@@ -1,4 +1,4 @@
-package com.scrabble.client.view;
+package com.scrabble.client.controller;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -6,9 +6,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
-public class ViewStarter extends Application {
+public class MainController extends Application {
 
-    public static void start(String... args) {
+    public static void init(String... args) {
         launch(args);
     }
 

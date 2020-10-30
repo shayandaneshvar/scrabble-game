@@ -1,9 +1,9 @@
 package com.scrabble.client;
 
-import com.scrabble.client.view.ViewStarter;
+import com.scrabble.client.controller.MainController;
 
 public class ClientMain {
     public static void main(String[] args) {
-        ViewStarter.start(args);
+        MainController.init(args);
     }
 }
