@@ -1,22 +1,22 @@
 package com.scrabble.client.model;
 
 public class Cell {
-    private Character content;
+    private CellContent content;
 
-    public Cell(Character character){
+    public Cell(CellContent character){
         content = character;
     }
 
     public Cell(){
-        content = ' ';
+        content = CellContent.EMPTY;
     }
 
 
-    public Character getContent() {
+    public CellContent getContent() {
         return content;
     }
 
-    public void setContent(Character content) {
+    public void setContent(CellContent content) {
         this.content = content;
     }
 }
