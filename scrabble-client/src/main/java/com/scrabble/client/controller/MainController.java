@@ -13,6 +13,7 @@ import java.io.File;
 
 public class MainController extends Application {
     private MainView mainView;
+    private Command<String> startCommand = this::startGame;
 
     public static void init(String... args) {
         launch(args);
@@ -34,6 +35,11 @@ public class MainController extends Application {
         primaryStage.setTitle("Scrabble");
         primaryStage.show();
         mainView = new MainView(root, primaryStage, scene);
+        mainView.setStartCommand(startCommand);
         mainView.showMainMenu();
+    }
+
+    public void startGame(String name) {
+        // TODO: implement this method
     }
 }
