@@ -58,7 +58,7 @@ public class MainView {
             stage.setTitle("Start");
             Group root1 = new Group();
             Scene scene1 = new Scene(root1, 294, 130);
-            scene1.setFill(Color.ORANGE);
+            scene1.setFill(Color.web("#260c1a"));
             stage.setScene(scene1);
             stage.show();
             TextField textField = new TextField();
@@ -127,7 +127,7 @@ public class MainView {
                     new Stop(0.9, Color.web("#f05d23")),
                     new Stop(1, Color.TRANSPARENT));
             Rectangle bg = new Rectangle(width, height);
-            bg.setFill(Color.web("#f05d23"));
+            bg.setFill(gradient);
             bg.setOpacity(0.9);
             Text text = new Text(name);
             text.setFill(Color.web("#f7f7f2"));
@@ -138,12 +138,11 @@ public class MainView {
 
             setOnMouseEntered(event -> {
                 text.setFill(Color.web("#c5d86d"));
-                bg.setFill(gradient);
-
+                bg.setFill(Color.web("#f05d23"));
             });
             setOnMouseExited(event -> {
                 text.setFill(Color.web("#f7f7f2"));
-                bg.setFill(Color.web("#f05d23"));
+                bg.setFill(gradient);
             });
             setOnMousePressed(event -> bg.setFill(Color.web("#f7f7f2")));
             setOnMouseReleased(event -> bg.setFill(gradient));

@@ -2,13 +2,13 @@ package com.scrabble.client.model;
 
 import com.scrabble.client.view.Observer;
 
-public interface Observable {
+public interface Observable<T extends Observable<T>> {
 
-    void addObserver(Observer observer);
+    void addObserver(Observer<T> observer);
 
     void updateObservers();
 
-    default void removeObserver(Observer observer) {
+    default void removeObserver(Observer<T> observer) {
         throw new UnsupportedOperationException();
     }
 
