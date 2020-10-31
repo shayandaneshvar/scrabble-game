@@ -1,10 +1,7 @@
 package com.scrabble.client.controller;
 
 import com.scrabble.client.model.HumanPlayer;
-import com.scrabble.client.model.NetworkEnabledGame;
-import com.scrabble.client.view.GameView;
 import com.scrabble.client.view.MainView;
-import com.scrabble.client.view.MultiPlayerGameView;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -41,9 +38,8 @@ public class MainController extends Application {
     public void startMultiPlayerGame(String name) {
         HumanPlayer humanPlayer = new HumanPlayer(name);
         NetworkEnabledGameController controller =
-                new NetworkEnabledGameController(humanPlayer);
-
-        // TODO: implement this method
+                new NetworkEnabledGameController(humanPlayer, primaryStage);
+        controller.init();
     }
 
     public static void init(String... args) {
