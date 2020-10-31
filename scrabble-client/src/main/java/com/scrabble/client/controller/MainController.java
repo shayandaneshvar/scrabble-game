@@ -1,6 +1,10 @@
 package com.scrabble.client.controller;
 
+import com.scrabble.client.model.HumanPlayer;
+import com.scrabble.client.model.NetworkEnabledGame;
+import com.scrabble.client.view.GameView;
 import com.scrabble.client.view.MainView;
+import com.scrabble.client.view.MultiPlayerGameView;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -12,16 +16,11 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class MainController extends Application {
-    private MainView mainView;
-    private Command<String> startCommand = this::startGame;
-
-    public static void init(String... args) {
-        launch(args);
-    }
+    private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // delete these and write your own logic
+        this.primaryStage = primaryStage;
         Group root = new Group();
         Scene scene = new Scene(root, 1000, 800, false,
                 SceneAntialiasing.BALANCED);
@@ -34,12 +33,20 @@ public class MainController extends Application {
                 .getAbsoluteFile().toURI().toURL().toString()));
         primaryStage.setTitle("Scrabble");
         primaryStage.show();
-        mainView = new MainView(root, primaryStage, scene);
-        mainView.setStartCommand(startCommand);
+        MainView mainView = new MainView(root, primaryStage, scene);
+        mainView.setStartMultiCommand(this::startMultiPlayerGame);
         mainView.showMainMenu();
     }
 
-    public void startGame(String name) {
+    public void startMultiPlayerGame(String name) {
+        HumanPlayer humanPlayer = new HumanPlayer(name);
+        NetworkEnabledGameController controller =
+                new NetworkEnabledGameController(humanPlayer);
+
         // TODO: implement this method
+    }
+
+    public static void init(String... args) {
+        launch(args);
     }
 }

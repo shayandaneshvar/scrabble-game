@@ -1,10 +1,7 @@
 package com.scrabble.client.view;
 
-import com.scrabble.client.model.Game;
+public interface GameView<T> {
 
-public class GameView implements Observer<Game> {
-    @Override
-    public void update(Game game) {
-        throw new UnsupportedOperationException();
-    }
+    void drawGameBoard(T t);
+
 }

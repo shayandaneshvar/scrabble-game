@@ -25,7 +25,7 @@ public class MainView {
     private Group root;
     private Stage primaryStage;
     private Scene scene;
-    private Command<String> startCommand;
+    private Command<String> startMultiCommand;
 
     public MainView(Group root, Stage primaryStage, Scene scene) {
         this.root = root;
@@ -77,13 +77,13 @@ public class MainView {
             vBox1.getChildren().addAll(textField, menuItem);
             menuItem.setOnMouseClicked(z -> {
                 stage.close();
-                startCommand.execute(textField.getText());
+                startMultiCommand.execute(textField.getText());
             });
         });
     }
 
-    public void setStartCommand(Command<String> startCommand) {
-        this.startCommand = startCommand;
+    public void setStartMultiCommand(Command<String> startCommand) {
+        this.startMultiCommand = startCommand;
     }
 
     private static class Title extends StackPane {
@@ -119,7 +119,6 @@ public class MainView {
 
 
     public static class MenuItem extends StackPane {
-
         public MenuItem(String name, int width, int height) {
             LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true,
                     CycleMethod.NO_CYCLE, new Stop(0, Color.TRANSPARENT),
@@ -135,7 +134,6 @@ public class MainView {
                     28));
             setAlignment(Pos.CENTER);
             getChildren().addAll(bg, text);
-
             setOnMouseEntered(event -> {
                 text.setFill(Color.web("#c5d86d"));
                 bg.setFill(Color.web("#f05d23"));
