@@ -18,6 +18,11 @@ public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
         this.player = player;
     }
 
+    @Override
+    public Board getBoard(){
+        return super.getBoard().clone();
+    }
+
     public Player getPlayer() {
         return player;
     }

@@ -19,7 +19,7 @@ public class MainController extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         Group root = new Group();
-        Scene scene = new Scene(root, 1000, 800, false,
+        Scene scene = new Scene(root, 800, 800, false,
                 SceneAntialiasing.BALANCED);
         primaryStage.setScene(scene);
         Circle circle = new Circle(20, 20, 20);

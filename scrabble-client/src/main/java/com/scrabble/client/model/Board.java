@@ -1,6 +1,6 @@
 package com.scrabble.client.model;
 
-public class Board {
+public class Board implements Cloneable {
     private Cell[][] cells = new Cell[14][14];
 
     {
@@ -9,6 +9,18 @@ public class Board {
                 cells[i][j] = new Cell();
             }
         }
+    }
+
+    @Override
+    public Board clone() {
+        Board board = null;
+        try {
+            board = (Board) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        board.cells = cells.clone();
+        return board;
     }
 
     public Board() {

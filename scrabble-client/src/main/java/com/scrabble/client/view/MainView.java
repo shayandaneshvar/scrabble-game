@@ -39,7 +39,7 @@ public class MainView {
         MenuItem exit = new MenuItem("Exit", 500, 180);
         MenuBox menuBox = new MenuBox(singlePlayer, multiPlayer, exit);
         vBox.getChildren().addAll(title, menuBox);
-        vBox.setTranslateX(252d);
+        vBox.setTranslateX(152d);
         vBox.setTranslateY(64d);
         vBox.setSpacing(68d);
         exit.setOnMouseClicked(event -> System.exit(0));
