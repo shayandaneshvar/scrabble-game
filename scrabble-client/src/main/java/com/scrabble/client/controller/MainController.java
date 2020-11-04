@@ -30,6 +30,7 @@ public class MainController extends Application {
                 .getAbsoluteFile().toURI().toURL().toString()));
         primaryStage.setTitle("Scrabble");
         primaryStage.show();
+
         MainView mainView = new MainView(root, primaryStage, scene);
         mainView.setStartMultiCommand(this::startMultiPlayerGame);
         mainView.showMainMenu();
