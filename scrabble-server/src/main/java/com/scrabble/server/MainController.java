@@ -17,6 +17,7 @@ public class MainController {
     private volatile List<PlayerInfo> playerInfos = new ArrayList<>();
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+    private Boolean gameStarted = false;
 
     public void handleDisconnection(SocketException e, PlayerInfo playerInfo) {
         playerInfos.remove(playerInfo);
@@ -26,12 +27,18 @@ public class MainController {
         serverSocket = new ServerSocket(port);
     }
 
+    public void startGame() {
+        gameStarted = true;
+    }
 
     public void init() throws IOException, ClassNotFoundException {
         System.out.println("Starting Server...");
         Socket socket;
         List<PlayerHandler> playerList = new ArrayList<>();
-        while (true) {
+        while (!gameStarted) {
+            if (playerInfos.size() >= 4) {
+                continue;
+            }
             try {
                 System.out.println("Accepting Clients ...");
                 socket = serverSocket.accept();
@@ -39,6 +46,7 @@ public class MainController {
                 PlayerInfo playerInfo = new PlayerInfo("Undefined");
                 PlayerHandler handler = new PlayerHandler(playerInfo, socket, atomicBoolean, playerInfos);
                 handler.setDisconnectionCommand(this::handleDisconnection);
+                handler.setStartGameCommand(this::startGame);
                 executorService.execute(handler);
                 playerList.add(handler);
                 playerInfo.setAddress(socket.getInetAddress());
@@ -47,7 +55,6 @@ public class MainController {
                 e.printStackTrace();
                 System.out.println("An Error Occurred...!");
             }
-
         }
     }
 }

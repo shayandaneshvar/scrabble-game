@@ -22,6 +22,7 @@ public class PlayerHandler implements Runnable {
     private Boolean isAdmin = false;
     private volatile List<PlayerInfo> playerInfos;
     private BiConsumer<SocketException, PlayerInfo> disconnectionCommand;
+    private Runnable gameStart;
 
     public PlayerHandler(PlayerInfo playerInfo, Socket socket,
                          AtomicBoolean atomicBoolean,
@@ -38,6 +39,8 @@ public class PlayerHandler implements Runnable {
         // start gathering players then start the game
         prepareGame();
         // handle game logic
+
+
     }
 
 
@@ -58,6 +61,7 @@ public class PlayerHandler implements Runnable {
                     String startCommand = (String) ois.readObject();
                     if (startCommand.toLowerCase().equals("start")) {
                         PlayerInfo.setStartGame(true);
+                        gameStart.run();
                         return;
                     }
                 }
@@ -93,5 +97,9 @@ public class PlayerHandler implements Runnable {
 
     public void setDisconnectionCommand(BiConsumer<SocketException, PlayerInfo> consumer) {
         this.disconnectionCommand = consumer;
+    }
+
+    public void setStartGameCommand(Runnable startGame) {
+        gameStart = startGame;
     }
 }
