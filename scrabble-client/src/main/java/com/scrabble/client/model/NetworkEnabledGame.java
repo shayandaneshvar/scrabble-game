@@ -1,6 +1,7 @@
 package com.scrabble.client.model;
 
 import com.scrabble.client.view.Observer;
+import com.scrabble.server.dto.PlayerInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,23 @@ import java.util.List;
 public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
     private List<Observer<NetworkEnabledGame>> observers = new ArrayList<>();
     private Player player;
+    private volatile List<PlayerInfo> otherPlayers = new ArrayList<>();
+
+    public List<Observer<NetworkEnabledGame>> getObservers() {
+        return observers;
+    }
+
+    public void setObservers(List<Observer<NetworkEnabledGame>> observers) {
+        this.observers = observers;
+    }
+
+    public List<PlayerInfo> getOtherPlayers() {
+        return otherPlayers;
+    }
+
+    public void setOtherPlayers(List<PlayerInfo> otherPlayers) {
+        this.otherPlayers = otherPlayers;
+    }
 
     public NetworkEnabledGame(Board board, Player player) {
         super(board);
@@ -19,7 +37,7 @@ public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
     }
 
     @Override
-    public Board getBoard(){
+    public Board getBoard() {
         return super.getBoard().clone();
     }
 

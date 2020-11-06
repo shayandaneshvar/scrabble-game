@@ -1,10 +1,12 @@
 package com.scrabble.server;
 
+import com.scrabble.server.dto.PlayerInfo;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,15 +18,15 @@ public class PlayerHandler implements Runnable {
     private final AtomicBoolean adminSelected;
     private final PlayerInfo playerInfo;
     private Boolean isAdmin = false;
-    private HashMap<Socket, PlayerInfo> socketPlayerHashMap;
+    private volatile List<PlayerInfo> playerInfos;
 
     public PlayerHandler(PlayerInfo playerInfo, Socket socket,
                          AtomicBoolean atomicBoolean,
-                         HashMap<Socket, PlayerInfo> playerHashMap) {
+                         List<PlayerInfo> playerInfos) {
         this.socket = socket;
         this.adminSelected = atomicBoolean;
         this.playerInfo = playerInfo;
-        socketPlayerHashMap = playerHashMap;
+        this.playerInfos = playerInfos;
     }
 
 
@@ -49,7 +51,7 @@ public class PlayerHandler implements Runnable {
                     isAdmin = true;
                 }
                 playerInfo.setAdmin(true);
-                while (true) {
+                while (ois.available() <= 1) {
                     String startCommand = (String) ois.readObject();
                     if (startCommand.toLowerCase().equals("start")) {
                         PlayerInfo.setStartGame(true);
@@ -68,7 +70,7 @@ public class PlayerHandler implements Runnable {
             @Override
             public void run() {
                 try {
-                    ous.writeObject(socketPlayerHashMap);
+                    ous.writeObject(playerInfos);
                     if (PlayerInfo.getGameStarted()) {
                         ous.writeObject("Game Started!");
                         timer.purge();

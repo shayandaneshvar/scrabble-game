@@ -3,4 +3,5 @@ open module scrabble.client {
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.media;
+    requires scrabble.server;
 }

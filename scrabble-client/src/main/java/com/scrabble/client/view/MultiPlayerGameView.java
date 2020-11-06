@@ -10,11 +10,14 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import java.util.stream.IntStream;
 
 public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
         Observer<NetworkEnabledGame> {
@@ -25,7 +28,7 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
     public MultiPlayerGameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         root = new Group();
-        scene = new Scene(root, 1150, 900, false,
+        scene = new Scene(root, 1024, 900, false,
                 SceneAntialiasing.BALANCED);
         scene.setFill(Color.web("#260c1a"));
         primaryStage.setScene(scene);
@@ -36,9 +39,9 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
         root.getChildren().clear();
         Pane pane = new Pane();
         root.getChildren().add(pane);
+        Title title = new Title("Scrabble");
         GridPane gridPane = new GridPane();
         pane.getChildren().add(gridPane);
-        Title title = new Title("Scrabble");
         title.setScaleX(0.81);
         title.setScaleY(0.81);
         title.setTranslateX(320);
@@ -62,8 +65,41 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                         , i, j, 1, 1);
             }
         }
-        // TODO: 10/31/2020
+        VBox vBox = new VBox();
+        pane.getChildren().add(vBox);
+        vBox.setStyle("-fx-background-color: #260c1a;-fx-border-color: #f05d23;"
+                + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
+                + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
+        vBox.setTranslateX(780);
+        vBox.setTranslateY(120);
+        game.getOtherPlayers().forEach(z -> {
+            VBox vBox1 = new VBox();
+            vBox1.setStyle("-fx-background-color: #260c1a;-fx-border-color: #f7f7f2;"
+                    + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
+                    + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
+            Label name = new Label();
+            String rawName = z.getName();
+            int length = 10 - z.getName().length();
+            StringBuilder offset = new StringBuilder();
+            IntStream.range(0,length).forEach(y -> offset.append(" "));
+            name.setText(offset.substring(length / 2) + rawName.concat(offset.substring(length / 2)));
+            Label ip = new Label();
+            ip.setText(z.getAddress().getHostAddress());
 
+            name.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
+                    FontPosture.REGULAR, 32));
+            name.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
+                    ";-fx-background-radius: 7%;-fx-text-fill: #c5d86d");
+            name.setAlignment(Pos.CENTER);
+
+            ip.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
+                    FontPosture.REGULAR, 24));
+            ip.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
+                    ";-fx-background-radius: 7%;-fx-text-fill: #f7f7f2");
+            ip.setAlignment(Pos.CENTER);
+            vBox1.getChildren().addAll(name, ip);
+            vBox.getChildren().add(vBox1);
+        });
     }
 
     public static Label createCell(String string, int size, String bColor,

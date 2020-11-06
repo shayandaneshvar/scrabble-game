@@ -9,6 +9,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.File;
 
@@ -36,11 +37,11 @@ public class MainController extends Application {
         mainView.showMainMenu();
     }
 
-    public void startMultiPlayerGame(String name) {
-        HumanPlayer humanPlayer = new HumanPlayer(name);
+    public void startMultiPlayerGame(Pair<String, String> nameHost) {
+        HumanPlayer humanPlayer = new HumanPlayer(nameHost.getKey());
         NetworkEnabledGameController controller =
                 new NetworkEnabledGameController(humanPlayer, primaryStage);
-        controller.init();
+        controller.init(nameHost.getValue());
     }
 
     public static void init(String... args) {
