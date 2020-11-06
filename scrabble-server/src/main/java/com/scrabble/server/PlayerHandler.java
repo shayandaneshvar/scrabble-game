@@ -17,55 +17,53 @@ public class PlayerHandler implements Runnable {
     private final Socket socket;
     private ObjectInputStream ois = null;
     private ObjectOutputStream ous = null;
+    private volatile PlayerInfo playerInfo;
     private final AtomicBoolean adminSelected;
-    private final PlayerInfo playerInfo;
-    private Boolean isAdmin = false;
-    private volatile List<PlayerInfo> playerInfos;
     private BiConsumer<SocketException, PlayerInfo> disconnectionCommand;
-    private Runnable gameStart;
+    private Runnable gameStart, updateCommand;
 
     public PlayerHandler(PlayerInfo playerInfo, Socket socket,
-                         AtomicBoolean atomicBoolean,
-                         List<PlayerInfo> playerInfos) {
+                         AtomicBoolean atomicBoolean) {
         this.socket = socket;
         this.adminSelected = atomicBoolean;
         this.playerInfo = playerInfo;
-        this.playerInfos = playerInfos;
+    }
+
+    public PlayerInfo getPlayerInfo() {
+        return playerInfo;
+    }
+
+    public void update(List<PlayerInfo> playerInfos) {
+        while (playerInfo.getName().equals("Undefined") || ous == null) {
+            try {
+                Thread.sleep(600);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(playerInfos + " T: " + Thread.currentThread().getName() + " from:" + playerInfo.getName());
+        try {
+            ous.reset();
+            ous.writeObject(playerInfos);
+            if (PlayerInfo.getGameStarted()) {
+                ous.writeObject("Game Started!");
+            }
+        } catch (SocketException e) {
+            disconnectionCommand.accept(e, playerInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Override
     public void run() {
-        // start gathering players then start the game
-        prepareGame();
-        // handle game logic
-
-
-    }
-
-
-    public void prepareGame() {
         try {
             ois = new ObjectInputStream(socket.getInputStream());
             ous = new ObjectOutputStream(socket.getOutputStream());
             String name = (String) ois.readObject();
             playerInfo.setName(name);
-            handleUpdateNewPlayers();
-            if (!adminSelected.get()) {
-                synchronized (adminSelected) {
-                    adminSelected.set(true);
-                    isAdmin = true;
-                }
-                playerInfo.setAdmin(true);
-                while (ois.available() <= 1) {
-                    String startCommand = (String) ois.readObject();
-                    if (startCommand.toLowerCase().equals("start")) {
-                        PlayerInfo.setStartGame(true);
-                        gameStart.run();
-                        return;
-                    }
-                }
-            }
+            handleAdminSelection();
         } catch (SocketException s) {
             disconnectionCommand.accept(s, playerInfo);
         } catch (IOException | ClassNotFoundException e) {
@@ -73,26 +71,44 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    private void handleUpdateNewPlayers() {
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
+    private void handleAdminSelection() {
+        Timer adminTimer = new Timer();
+        TimerTask task1 = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    ous.writeObject(playerInfos);
-                    if (PlayerInfo.getGameStarted()) {
-                        ous.writeObject("Game Started!");
-                        timer.purge();
+                synchronized (adminSelected) {
+                    if (!adminSelected.get()) {
+                        adminSelected.set(true);
+                        playerInfo.setAdmin(true);
+                        updateCommand.run();
+                    } else {
+                        return;
                     }
-                } catch (SocketException e) {
-                    disconnectionCommand.accept(e, playerInfo);
-                    timer.purge();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                }
+                if (playerInfo.getAdmin()) {
+                    try {
+                        if (!(ois.available() <= 1)) {
+                            return;
+                        }
+                        String startCommand = (String) ois.readObject();
+                        if (startCommand.toLowerCase().equals("start")) {
+                            PlayerInfo.setStartGame(true);
+                            gameStart.run();
+                            adminTimer.purge();
+                        }
+                    } catch (SocketException e) {
+                        disconnectionCommand.accept(e, playerInfo);
+                        adminTimer.purge();
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (PlayerInfo.getGameStarted()) {
+                    adminTimer.purge();
                 }
             }
         };
-        timer.schedule(task, 1, 800);
+        adminTimer.schedule(task1, 1, 800);
     }
 
     public void setDisconnectionCommand(BiConsumer<SocketException, PlayerInfo> consumer) {
@@ -101,5 +117,9 @@ public class PlayerHandler implements Runnable {
 
     public void setStartGameCommand(Runnable startGame) {
         gameStart = startGame;
+    }
+
+    public void setUpdateCommand(Runnable updateEachPlayer) {
+        this.updateCommand = updateEachPlayer;
     }
 }

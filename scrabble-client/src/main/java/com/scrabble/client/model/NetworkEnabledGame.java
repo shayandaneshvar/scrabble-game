@@ -9,7 +9,7 @@ import java.util.List;
 public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
     private List<Observer<NetworkEnabledGame>> observers = new ArrayList<>();
     private Player player;
-    private volatile List<PlayerInfo> otherPlayers = new ArrayList<>();
+    private final List<PlayerInfo> otherPlayers = new ArrayList<>();
 
     public List<Observer<NetworkEnabledGame>> getObservers() {
         return observers;
@@ -23,9 +23,6 @@ public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
         return otherPlayers;
     }
 
-    public void setOtherPlayers(List<PlayerInfo> otherPlayers) {
-        this.otherPlayers = otherPlayers;
-    }
 
     public NetworkEnabledGame(Board board, Player player) {
         super(board);

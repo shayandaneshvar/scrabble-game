@@ -19,6 +19,7 @@ public class MainController extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        primaryStage.setOnCloseRequest(e -> this.stop());
         Group root = new Group();
         Scene scene = new Scene(root, 800, 800, false,
                 SceneAntialiasing.BALANCED);
@@ -42,6 +43,11 @@ public class MainController extends Application {
         NetworkEnabledGameController controller =
                 new NetworkEnabledGameController(humanPlayer, primaryStage);
         controller.init(nameHost.getValue());
+    }
+
+    @Override
+    public void stop() {
+        System.exit(0);
     }
 
     public static void init(String... args) {

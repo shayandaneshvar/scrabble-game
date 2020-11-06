@@ -98,7 +98,11 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                 if (!z.getAdmin()) {
                     button.setDisable(true);
                 }
-                button.setOnMouseClicked(e -> startGameCommand.execute(true));
+                button.setOnMouseClicked(e -> {
+                    startGameCommand.execute(true);
+                    button.setDisable(true);
+                    z.setAdmin(false);
+                });
                 button.setStyle("-fx-background-color: #f05d23; -fx-fill: #f7f7f2; ");
                 vBox1.getChildren().add(button);
             } else {

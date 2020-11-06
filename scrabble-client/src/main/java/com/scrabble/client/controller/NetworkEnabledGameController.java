@@ -37,7 +37,14 @@ public class NetworkEnabledGameController {
     }
 
     public void startGame(Boolean isAdmin) {
+        try {
+            oos.reset();
+            oos.writeObject("start");
 
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startCommunication() {
@@ -54,12 +61,16 @@ public class NetworkEnabledGameController {
                     String command = (String) object;
                     if (command.toLowerCase().contains("start")) {
                         startGame(false);
+                        return;
                     } else {
                         continue;
                     }
                 }
                 List<PlayerInfo> playerInfoList = (List<PlayerInfo>) object;
-                game.setOtherPlayers(playerInfoList);
+                synchronized (game.getOtherPlayers()) {
+                    game.getOtherPlayers().clear();
+                    game.getOtherPlayers().addAll(playerInfoList);
+                }
                 Platform.runLater(() -> game.updateObservers());
             }
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
