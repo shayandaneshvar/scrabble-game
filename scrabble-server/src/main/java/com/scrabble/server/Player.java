@@ -2,6 +2,7 @@ package com.scrabble.server;
 
 import com.scrabble.server.dto.PlayerInfo;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -20,11 +21,24 @@ public class Player {
         return playerInfo;
     }
 
-    public ObjectInputStream getOis() {
-        return ois;
+    public void sendObject(Object object) {
+        try {
+            oos.reset();
+            oos.writeObject(object);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public ObjectOutputStream getOos() {
-        return oos;
+    public Object readObject() {
+        try {
+            while (ois.available() <= 1) {
+                Thread.sleep(50);
+            }
+            return ois.readObject();
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -10,6 +10,10 @@ public class GameManager implements Runnable {
 
     @Override
     public void run() {
-
+        while (true){
+            Player player = players.pop();
+//            player.
+            // TODO: 11/6/2020 game loop
+        }
     }
 }

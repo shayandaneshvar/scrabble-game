@@ -1,3 +1,4 @@
+import com.scrabble.server.WordUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -35,4 +36,7 @@ public class ScrabbleServerTests {
         bufferedWriter.close();
         fileWriter.close();
     }
+
+
+
 }

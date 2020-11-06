@@ -40,8 +40,7 @@ public class NetworkEnabledGameController {
         try {
             oos.reset();
             oos.writeObject("start");
-
-
+            // TODO: 11/6/2020 game loop
         } catch (IOException e) {
             e.printStackTrace();
         }

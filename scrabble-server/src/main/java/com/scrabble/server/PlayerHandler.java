@@ -22,6 +22,14 @@ public class PlayerHandler implements Runnable {
     private BiConsumer<SocketException, PlayerInfo> disconnectionCommand;
     private Runnable gameStart, updateCommand;
 
+    ObjectInputStream getInputStream() {
+        return ois;
+    }
+
+    ObjectOutputStream getOutputStream() {
+        return ous;
+    }
+
     public PlayerHandler(PlayerInfo playerInfo, Socket socket,
                          AtomicBoolean atomicBoolean) {
         this.socket = socket;
