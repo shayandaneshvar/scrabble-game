@@ -25,6 +25,7 @@ public class NetworkEnabledGameController {
     public NetworkEnabledGameController(Player player, Stage primaryStage) {
         game = new NetworkEnabledGame(new Board(), player);
         gameView = new MultiPlayerGameView(primaryStage);
+        gameView.setGameStartCommand(this::startGame);
         game.addObserver(gameView);
     }
 
@@ -33,6 +34,10 @@ public class NetworkEnabledGameController {
         game.updateObservers();
         this.host = host;
         new Thread(this::startCommunication).start();
+    }
+
+    public void startGame(Boolean isAdmin) {
+
     }
 
     public void startCommunication() {
@@ -48,7 +53,7 @@ public class NetworkEnabledGameController {
                 if (object instanceof String) {
                     String command = (String) object;
                     if (command.toLowerCase().contains("start")) {
-                        // TODO: 11/6/2020
+                        startGame(false);
                     } else {
                         continue;
                     }

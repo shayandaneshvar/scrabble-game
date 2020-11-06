@@ -1,5 +1,6 @@
 package com.scrabble.client.view;
 
+import com.scrabble.client.controller.Command;
 import com.scrabble.client.model.CellContent;
 import com.scrabble.client.model.NetworkEnabledGame;
 import com.scrabble.client.view.util.Title;
@@ -7,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -24,6 +26,7 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
     private Stage primaryStage;
     private Group root;
     private Scene scene;
+    private Command<Boolean> startGameCommand;
 
     public MultiPlayerGameView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -81,23 +84,34 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
             String rawName = z.getName();
             int length = 10 - z.getName().length();
             StringBuilder offset = new StringBuilder();
-            IntStream.range(0,length).forEach(y -> offset.append(" "));
+            IntStream.range(0, length).forEach(y -> offset.append(" "));
             name.setText(offset.substring(length / 2) + rawName.concat(offset.substring(length / 2)));
-            Label ip = new Label();
-            ip.setText(z.getAddress().getHostAddress());
 
             name.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
                     FontPosture.REGULAR, 32));
             name.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
                     ";-fx-background-radius: 7%;-fx-text-fill: #c5d86d");
             name.setAlignment(Pos.CENTER);
+            vBox1.getChildren().add(name);
+            if (z.getName().equals(game.getPlayer().getName())) {
+                Button button = new Button("Start Game");
+                if (!z.getAdmin()) {
+                    button.setDisable(true);
+                }
+                button.setOnMouseClicked(e -> startGameCommand.execute(true));
+                button.setStyle("-fx-background-color: #f05d23; -fx-fill: #f7f7f2; ");
+                vBox1.getChildren().add(button);
+            } else {
+                Label ip = new Label();
+                ip.setText(z.getAddress().getHostAddress());
+                ip.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
+                        FontPosture.REGULAR, 24));
+                ip.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
+                        ";-fx-background-radius: 7%;-fx-text-fill: #f7f7f2");
+                ip.setAlignment(Pos.CENTER);
+                vBox1.getChildren().add(ip);
+            }
 
-            ip.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
-                    FontPosture.REGULAR, 24));
-            ip.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
-                    ";-fx-background-radius: 7%;-fx-text-fill: #f7f7f2");
-            ip.setAlignment(Pos.CENTER);
-            vBox1.getChildren().addAll(name, ip);
             vBox.getChildren().add(vBox1);
         });
     }
@@ -117,5 +131,9 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
     @Override
     public void update(NetworkEnabledGame game) {
         drawGameBoard(game);
+    }
+
+    public void setGameStartCommand(Command<Boolean> startGame) {
+        startGameCommand = startGame;
     }
 }

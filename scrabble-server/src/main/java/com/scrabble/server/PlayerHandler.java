@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 public class PlayerHandler implements Runnable {
     private final Socket socket;
@@ -19,6 +21,7 @@ public class PlayerHandler implements Runnable {
     private final PlayerInfo playerInfo;
     private Boolean isAdmin = false;
     private volatile List<PlayerInfo> playerInfos;
+    private BiConsumer<SocketException, PlayerInfo> disconnectionCommand;
 
     public PlayerHandler(PlayerInfo playerInfo, Socket socket,
                          AtomicBoolean atomicBoolean,
@@ -59,6 +62,8 @@ public class PlayerHandler implements Runnable {
                     }
                 }
             }
+        } catch (SocketException s) {
+            disconnectionCommand.accept(s, playerInfo);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -75,11 +80,18 @@ public class PlayerHandler implements Runnable {
                         ous.writeObject("Game Started!");
                         timer.purge();
                     }
+                } catch (SocketException e) {
+                    disconnectionCommand.accept(e, playerInfo);
+                    timer.purge();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         };
         timer.schedule(task, 1, 800);
+    }
+
+    public void setDisconnectionCommand(BiConsumer<SocketException, PlayerInfo> consumer) {
+        this.disconnectionCommand = consumer;
     }
 }
