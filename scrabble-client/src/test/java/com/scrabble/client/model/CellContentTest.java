@@ -17,4 +17,5 @@ class CellContentTest {
         Assertions.assertEquals(' ', character);
         Assertions.assertEquals('A', characterA);
     }
+
 }

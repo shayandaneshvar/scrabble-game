@@ -54,6 +54,8 @@ public class PlayerHandler implements Runnable {
             ous.reset();
             ous.writeObject(playerInfos);
             if (PlayerInfo.getGameStarted()) {
+                ous.flush();
+                ous.reset();
                 ous.writeObject("Game Started!");
             }
         } catch (SocketException e) {

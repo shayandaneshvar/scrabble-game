@@ -1,8 +1,8 @@
 package com.scrabble.client.controller;
 
 import com.scrabble.client.model.Board;
+import com.scrabble.client.model.HumanPlayer;
 import com.scrabble.client.model.NetworkEnabledGame;
-import com.scrabble.client.model.Player;
 import com.scrabble.client.view.MultiPlayerGameView;
 import com.scrabble.server.dto.PlayerInfo;
 import javafx.application.Platform;
@@ -21,8 +21,10 @@ public class NetworkEnabledGameController {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private String host;
+    private Thread communicationThread;
+    private volatile Boolean isAdmin = false;
 
-    public NetworkEnabledGameController(Player player, Stage primaryStage) {
+    public NetworkEnabledGameController(HumanPlayer player, Stage primaryStage) {
         game = new NetworkEnabledGame(new Board(), player);
         gameView = new MultiPlayerGameView(primaryStage);
         gameView.setGameStartCommand(this::startGame);
@@ -31,17 +33,28 @@ public class NetworkEnabledGameController {
 
 
     public void init(String host) {
-        game.updateObservers();
         this.host = host;
-        new Thread(this::startCommunication).start();
+        communicationThread = new Thread(this::startCommunication);
+        communicationThread.start();
     }
 
     public void startGame(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
+        prepareGame();
+    }
+
+    private void prepareGame() {
+        game.setGameStarted(true);
         try {
-            oos.reset();
-            oos.writeObject("start");
-            // TODO: 11/6/2020 game loop
-        } catch (IOException e) {
+            if (isAdmin) {
+                oos.reset();
+                oos.writeObject("start");
+                communicationThread.join();
+            }
+            List<Character> characters = (List<Character>) ois.readObject();
+            game.getPlayer().setCharacters(characters);
+            Platform.runLater(()->game.updateObservers());
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -59,7 +72,9 @@ public class NetworkEnabledGameController {
                 if (object instanceof String) {
                     String command = (String) object;
                     if (command.toLowerCase().contains("start")) {
-                        startGame(false);
+                        if (!isAdmin) {
+                            startGame(false);
+                        }
                         return;
                     } else {
                         continue;

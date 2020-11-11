@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
     private List<Observer<NetworkEnabledGame>> observers = new ArrayList<>();
-    private Player player;
+    private HumanPlayer player;
     private final List<PlayerInfo> otherPlayers = new ArrayList<>();
 
     public List<Observer<NetworkEnabledGame>> getObservers() {
@@ -24,12 +24,12 @@ public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
     }
 
 
-    public NetworkEnabledGame(Board board, Player player) {
+    public NetworkEnabledGame(Board board, HumanPlayer player) {
         super(board);
         this.player = player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(HumanPlayer player) {
         this.player = player;
     }
 
@@ -38,7 +38,7 @@ public class NetworkEnabledGame extends Game<NetworkEnabledGame> {
         return super.getBoard().clone();
     }
 
-    public Player getPlayer() {
+    public HumanPlayer getPlayer() {
         return player;
     }
 

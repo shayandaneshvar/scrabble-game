@@ -29,6 +29,10 @@ public class CircularQueue<T> {
         throw new QueueException("Queue Has Empty Slots Available");
     }
 
+    public int size() {
+        return objects.length;
+    }
+
     public T pop() {
         if (init) {
             T t = (T) (objects[pointer % objects.length]);

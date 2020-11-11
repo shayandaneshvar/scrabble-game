@@ -4,21 +4,21 @@ import com.scrabble.client.controller.Command;
 import com.scrabble.client.model.CellContent;
 import com.scrabble.client.model.NetworkEnabledGame;
 import com.scrabble.client.view.util.Title;
+import com.scrabble.server.dto.PlayerInfo;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.util.Iterator;
 import java.util.stream.IntStream;
 
 public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
@@ -75,7 +75,10 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                 + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
         vBox.setTranslateX(780);
         vBox.setTranslateY(120);
-        game.getOtherPlayers().forEach(z -> {
+
+        Iterator<PlayerInfo> playerInfoIterator = game.getOtherPlayers().iterator();
+        while (playerInfoIterator.hasNext()) {
+            PlayerInfo z = playerInfoIterator.next();
             VBox vBox1 = new VBox();
             vBox1.setStyle("-fx-background-color: #260c1a;-fx-border-color: #f7f7f2;"
                     + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
@@ -93,7 +96,7 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                     ";-fx-background-radius: 7%;-fx-text-fill: #c5d86d");
             name.setAlignment(Pos.CENTER);
             vBox1.getChildren().add(name);
-            if (z.getName().equals(game.getPlayer().getName())) {
+            if (z.getName().equals(game.getPlayer().getName()) && !game.getGameStarted()) {
                 Button button = new Button("Start Game");
                 if (!z.getAdmin()) {
                     button.setDisable(true);
@@ -115,9 +118,21 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                 ip.setAlignment(Pos.CENTER);
                 vBox1.getChildren().add(ip);
             }
-
             vBox.getChildren().add(vBox1);
-        });
+        }
+
+
+        if (game.getGameStarted()) {
+            FlowPane flow = new FlowPane();
+            flow.setStyle("-fx-background-color: #260c1a;-fx-border-color: #f05d23;"
+                    + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
+                    + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
+            game.getPlayer().getCharacters().forEach(z -> flow.getChildren().add
+                    (createCell(" " + z.toString() + " ", 28, "Wheat", "Wheat")));
+            pane.getChildren().add(flow);
+            flow.setTranslateX(780);
+            flow.setTranslateY(520);
+        }
     }
 
     public static Label createCell(String string, int size, String bColor,

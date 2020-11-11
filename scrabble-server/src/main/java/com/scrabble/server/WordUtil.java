@@ -13,7 +13,7 @@ public enum WordUtil {
         if (cachedWords.contains(word)) {
             return true;
         }
-        try (Scanner scanner = new Scanner(new File("./src/main/resources/dic.txt"))) {
+        try (Scanner scanner = new Scanner(new File("scrabble-server/src/main/resources/dic.txt"))) {
             String previous = "a";
             while (scanner.hasNextLine() && previous.toCharArray()[0] <= word.toCharArray()[0]) {
                 previous = scanner.nextLine();
@@ -35,7 +35,7 @@ public enum WordUtil {
             result.put(i, new ArrayList<>());
         }
         try (Scanner scanner = new Scanner(new File(
-                "./src/main/resources/char_dist.txt"))) {
+                "scrabble-server/src/main/resources/char_dist.txt"))) {
             while (scanner.hasNextLine()) {
                 String str = scanner.nextLine();
                 Integer number = Integer.parseInt(str.substring(2).trim());

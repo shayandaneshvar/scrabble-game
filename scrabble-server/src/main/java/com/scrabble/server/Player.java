@@ -25,6 +25,7 @@ public class Player {
         try {
             oos.reset();
             oos.writeObject(object);
+            oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

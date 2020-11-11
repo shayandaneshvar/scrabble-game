@@ -48,6 +48,7 @@ public class MainController {
 
     public void startGame() {
         gameStarted = true;
+        updateEachPlayer();
         CircularQueue<Player> playerQueue = new CircularQueue<>(playerList.size());
         playerList.forEach(z -> playerQueue.push(new Player(z.getPlayerInfo(), z.getInputStream(), z.getOutputStream())));
         GameManager manager = new GameManager(playerQueue);
