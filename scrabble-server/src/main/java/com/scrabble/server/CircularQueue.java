@@ -1,6 +1,9 @@
 package com.scrabble.server;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CircularQueue<T> {
     private Object[] objects;
@@ -19,6 +22,14 @@ public class CircularQueue<T> {
             return;
         }
         throw new QueueException("Queue size is " + objects.length + " , Queue is Full!");
+    }
+
+    public List<T> toList() {
+        List<T> list = new ArrayList<>();
+        for (var o : objects) {
+            list.add((T) o);
+        }
+        return Collections.unmodifiableList(list);
     }
 
     public void init() {

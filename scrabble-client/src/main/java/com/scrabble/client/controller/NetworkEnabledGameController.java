@@ -1,8 +1,6 @@
 package com.scrabble.client.controller;
 
-import com.scrabble.client.model.Board;
-import com.scrabble.client.model.HumanPlayer;
-import com.scrabble.client.model.NetworkEnabledGame;
+import com.scrabble.client.model.*;
 import com.scrabble.client.view.MultiPlayerGameView;
 import com.scrabble.server.dto.PlayerInfo;
 import javafx.application.Platform;
@@ -41,6 +39,26 @@ public class NetworkEnabledGameController {
     public void startGame(Boolean isAdmin) {
         this.isAdmin = isAdmin;
         prepareGame();
+        try {
+            String string = (String) ois.readObject();
+            if (string.toLowerCase().contains("turn")) {
+                // game loop
+            } else {
+                String[] arr = string.split(",");
+                Direction direction = Direction.getDirection(arr[3]);
+                char[] word = arr[0].toCharArray();
+                int x = Integer.parseInt(arr[1]);
+                int y = Integer.parseInt(arr[2]);
+                for (int i = x; i < (direction.equals(Direction.HORIZONTAL) ? word.length : x + 1); i++) {
+                    for (int j = y; j < (direction.equals(Direction.VERTICAL) ? word.length : y + 1); j++) {
+                        game.getBoard().insertCell(i, j, CellContent.valueOf(String.valueOf(word[i - x + j - y])));
+                    }
+                }
+            }
+            Platform.runLater(game::updateObservers);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void prepareGame() {
@@ -53,7 +71,7 @@ public class NetworkEnabledGameController {
             }
             List<Character> characters = (List<Character>) ois.readObject();
             game.getPlayer().setCharacters(characters);
-            Platform.runLater(()->game.updateObservers());
+            Platform.runLater(() -> game.updateObservers());
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -16,8 +16,16 @@ public class GameManager implements Runnable {
         distributePieces();
         while (true) {
             Player player = players.pop();
-//            player.
-            // TODO: 11/6/2020 game loop
+            player.sendObject("turn");
+            String word = (String) player.readObject();
+            if (WordUtil.DICTIONARY.checkWord(word)) {
+                player.sendObject("accepted");
+                String str = (String) player.readObject(); // "x,y,(h/v)"
+                players.toList().stream().filter(z -> !z.equals(player))
+                        .forEach(z -> z.sendObject(word + "," + str));
+            } else {
+                player.sendObject("unaccepted");
+            }
         }
     }
 

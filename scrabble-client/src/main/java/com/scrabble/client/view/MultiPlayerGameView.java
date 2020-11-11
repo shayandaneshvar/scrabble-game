@@ -74,7 +74,7 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                 + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
                 + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
         vBox.setTranslateX(780);
-        vBox.setTranslateY(120);
+        vBox.setTranslateY(100);
 
         Iterator<PlayerInfo> playerInfoIterator = game.getOtherPlayers().iterator();
         while (playerInfoIterator.hasNext()) {
@@ -112,7 +112,7 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
                 Label ip = new Label();
                 ip.setText(z.getAddress().getHostAddress());
                 ip.setFont(Font.font("Bauhaus LT Medium", FontWeight.SEMI_BOLD,
-                        FontPosture.REGULAR, 24));
+                        FontPosture.REGULAR, 18));
                 ip.setStyle("-fx-background-color: transparent;-fx-padding: 16px" +
                         ";-fx-background-radius: 7%;-fx-text-fill: #f7f7f2");
                 ip.setAlignment(Pos.CENTER);
@@ -121,17 +121,17 @@ public class MultiPlayerGameView implements GameView<NetworkEnabledGame>,
             vBox.getChildren().add(vBox1);
         }
 
-
         if (game.getGameStarted()) {
             FlowPane flow = new FlowPane();
+            flow.setPrefWrapLength(210);
             flow.setStyle("-fx-background-color: #260c1a;-fx-border-color: #f05d23;"
                     + "-fx-border-style:SOLID;-fx-padding: 6px;-fx-border-radius: "
                     + "2%;-fx-background-radius:2% ; -fx-border-width: 2px");
             game.getPlayer().getCharacters().forEach(z -> flow.getChildren().add
-                    (createCell(" " + z.toString() + " ", 28, "Wheat", "Wheat")));
+                    (createCell(" " + z.toString() + " ", 24, "Wheat", "#f05d23")));
             pane.getChildren().add(flow);
             flow.setTranslateX(780);
-            flow.setTranslateY(520);
+            flow.setTranslateY(684);
         }
     }
 
